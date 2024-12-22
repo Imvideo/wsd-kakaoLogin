@@ -1,9 +1,3 @@
-<template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-800 text-white">
-    <p>카카오 로그인 처리 중...</p>
-  </div>
-</template>
-
 <script lang="ts">
 import { defineComponent, onMounted } from "vue";
 import axios from "axios";
@@ -19,20 +13,19 @@ export default defineComponent({
       const code = params.get("code");
 
       if (!code) {
-        console.error("Authorization code is missing.");
-        return;
+        alert("인증 코드가 없습니다. 다시 시도해주세요.");
+        return router.push("/signin");
       }
 
       try {
-        // 카카오 토큰 요청
         const response = await axios.post(
             "https://kauth.kakao.com/oauth/token",
             null,
             {
               params: {
                 grant_type: "authorization_code",
-                client_id: process.env.VUE_APP_KAKAO_API_KEY, // 환경 변수에서 카카오 API 키 가져오기
-                redirect_uri: process.env.VUE_APP_LOGIN_REDIRECT_URI, // 환경 변수에서 리다이렉트 URI 가져오기
+                client_id: process.env.VUE_APP_KAKAO_API_KEY,
+                redirect_uri: process.env.VUE_APP_LOGIN_REDIRECT_URI,
                 code,
               },
             }
@@ -40,7 +33,7 @@ export default defineComponent({
 
         const { access_token } = response.data;
 
-        // 카카오 사용자 정보 요청
+        // 사용자 정보 요청
         const userInfoResponse = await axios.get(
             "https://kapi.kakao.com/v2/user/me",
             {
@@ -50,22 +43,28 @@ export default defineComponent({
             }
         );
 
-        const userInfo = userInfoResponse.data;
+        const userInfo = userInfoResponse.data.kakao_account.profile;
 
-        // 로그인 성공 처리
+        // 사용자 정보 저장
         localStorage.setItem("kakaoAccessToken", access_token);
-        localStorage.setItem("userInfo", JSON.stringify(userInfo));
-        router.push("/"); // 홈 화면으로 이동
+        localStorage.setItem(
+            "userInfo",
+            JSON.stringify({
+              nickname: userInfo.nickname,
+              profile_image: userInfo.profile_image_url,
+            })
+        );
+
+        // 브라우저 스토리지 이벤트 트리거
+        window.dispatchEvent(new Event("storage"));
+
+        router.push("/");
       } catch (error) {
         console.error("Kakao Callback Error:", error);
+        alert("카카오 로그인 처리 중 오류가 발생했습니다.");
+        router.push("/signin");
       }
     });
   },
 });
 </script>
-
-<style scoped>
-.min-h-screen {
-  height: 100vh;
-}
-</style>
