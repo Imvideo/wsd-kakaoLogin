@@ -107,7 +107,7 @@ import { fetchGenres, fetchFilteredMovies } from "@/services/tmdbService";
 export default defineComponent({
   name: "SearchPage",
   setup() {
-    const apiKey = localStorage.getItem("apiKey");
+    const apiKey = ref(process.env.VUE_APP_TMDB_API_KEY);
     const movies = ref<any[]>([]);
     const genres = ref<any[]>([]);
     const loading = ref(false);
@@ -118,6 +118,11 @@ export default defineComponent({
 
     const currentPage = ref(1);
     const totalPages = ref(1);
+
+    if (!apiKey.value) {
+      alert("TMDB API key is missing. Please log in again.");
+      window.location.href = "/signin";
+    }
 
     const getImageUrl = (path: string) =>
         path ? `https://image.tmdb.org/t/p/w500${path}` : "/placeholder.jpg";
@@ -149,14 +154,10 @@ export default defineComponent({
     };
 
     const loadMovies = async () => {
-      if (!apiKey) {
-        console.error("API Key is missing!");
-        return;
-      }
       loading.value = true;
       try {
         const response = await fetchFilteredMovies({
-          apiKey,
+          apiKey: apiKey.value,
           page: currentPage.value,
           genre: selectedGenre.value,
           rating: selectedRating.value,
@@ -164,9 +165,9 @@ export default defineComponent({
         });
         movies.value = response.results.map((movie: any) => ({
           ...movie,
-          isWishlist: false, // 초기값
+          isWishlist: false,
         }));
-        loadWishlistStatus(); // 찜 상태 반영
+        loadWishlistStatus();
         totalPages.value = response.total_pages;
       } catch (error) {
         console.error("Error fetching movies:", error);
@@ -176,12 +177,8 @@ export default defineComponent({
     };
 
     const loadGenres = async () => {
-      if (!apiKey) {
-        console.error("API Key is missing!");
-        return;
-      }
       try {
-        const response = await fetchGenres(apiKey);
+        const response = await fetchGenres(apiKey.value);
         genres.value = response.genres;
       } catch (error) {
         console.error("Error fetching genres:", error);
@@ -206,8 +203,8 @@ export default defineComponent({
     watch(
         [selectedGenre, selectedRating, selectedSort],
         () => {
-          currentPage.value = 1; // 필터 변경 시 페이지 초기화
-          loadMovies(); // 필터 변경 즉시 검색
+          currentPage.value = 1;
+          loadMovies();
         },
         { immediate: true }
     );

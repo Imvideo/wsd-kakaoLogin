@@ -19,27 +19,31 @@ const routes = [
         meta: { requiresAuth: true }, // 인증이 필요한 페이지
     },
     {
-        path: "/popular", // 로그인 페이지
+        path: "/popular", // 인기 페이지
         name: "PopularPage",
         component: PopularPage,
+        meta: { requiresAuth: true }, // 인증 필요
     },
     {
-        path: "/search", // 로그인 페이지
+        path: "/search", // 검색 페이지
         name: "SearchPage",
         component: SearchPage,
+        meta: { requiresAuth: true }, // 인증 필요
     },
     {
-        path: "/wishlist", // 로그인 페이지
+        path: "/wishlist", // 찜 목록 페이지
         name: "WishList",
         component: WishList,
+        meta: { requiresAuth: true }, // 인증 필요
+    },
+    {
+        path: "/login/callback", // 카카오 인증 콜백
+        name: "KakaoCallback",
+        component: KakaoCallback,
     },
     {
         path: "/:pathMatch(.*)*", // 잘못된 경로 처리
         redirect: "/signin",
-    },
-    {
-        path: "/oauth/kakao/callback",
-        component: KakaoCallback
     },
 ];
 
@@ -50,13 +54,19 @@ const router = createRouter({
 
 // 인증 여부를 확인하는 글로벌 가드 설정
 router.beforeEach((to, from, next) => {
-    const isAuthenticated = localStorage.getItem("apiKey"); // API 키가 로그인 상태로 간주
-    if (to.meta.requiresAuth && !isAuthenticated) {
-        next("/signin"); // 인증 필요하지만 인증되지 않은 경우
-    } else if (to.path === "/signin" && isAuthenticated) {
-        next("/"); // 이미 인증된 상태에서 /signin으로 접근하면 홈으로 리디렉션
-    } else {
-        next(); // 인증이 필요 없거나 인증된 경우
+    const kakaoAccessToken = localStorage.getItem("kakaoAccessToken"); // 카카오 액세스 토큰 확인
+
+    // 인증이 필요한 페이지에 접근 시 토큰이 없으면 로그인 페이지로 리다이렉트
+    if (to.meta.requiresAuth && !kakaoAccessToken) {
+        next("/signin");
+    }
+    // 이미 로그인된 상태에서 로그인 페이지로 접근하면 홈 페이지로 리다이렉트
+    else if (to.path === "/signin" && kakaoAccessToken) {
+        next("/");
+    }
+    // 나머지 경로는 그대로 진행
+    else {
+        next();
     }
 });
 

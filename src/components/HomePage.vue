@@ -17,16 +17,15 @@ import MovieSlider from "@/components/MovieSlider.vue";
 export default defineComponent({
   name: "HomePage",
   components: {
-
     AppBanner,
     MovieSlider,
   },
   setup() {
-    const apiKey = ref(localStorage.getItem("apiKey"));
+    const apiKey = ref(process.env.VUE_APP_TMDB_API_KEY);
 
     onMounted(() => {
       if (!apiKey.value) {
-        alert("API key is missing. Please log in again.");
+        alert("TMDB API key is missing. Please check your environment variables.");
         window.location.href = "/signin";
       }
     });

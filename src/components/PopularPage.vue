@@ -129,7 +129,12 @@ export default defineComponent({
     // Wishlist 상태 관리
     const wishlist = ref<any[]>(JSON.parse(localStorage.getItem("wishlist") || "[]"));
 
-    const apiKey = localStorage.getItem("apiKey");
+    const apiKey = ref(process.env.VUE_APP_TMDB_API_KEY);
+
+    if (!apiKey.value) {
+      alert("TMDB API key is missing. Please check your environment variables.");
+      window.location.href = "/signin";
+    }
 
     const getImageUrl = (path: string) =>
         path ? `https://image.tmdb.org/t/p/w500${path}` : "/placeholder.jpg";
@@ -139,13 +144,9 @@ export default defineComponent({
     };
 
     const loadMovies = async (page: number) => {
-      if (!apiKey) {
-        console.error("API Key is missing!");
-        return;
-      }
       loading.value = true;
       try {
-        const response = await fetchPopularMovies(apiKey, page);
+        const response = await fetchPopularMovies(apiKey.value, page);
         if (viewMode.value === "infinite") {
           movies.value = [...movies.value, ...response];
         } else {
