@@ -4,6 +4,7 @@ import HomePage from "@/components/HomePage.vue";
 import PopularPage from "@/components/PopularPage.vue";
 import SearchPage from "@/components/SearchPage.vue";
 import WishList from "@/components/WishList.vue";
+import KakaoCallback from "@/components/KakaoCallback.vue";
 
 const routes = [
     {
@@ -35,6 +36,10 @@ const routes = [
     {
         path: "/:pathMatch(.*)*", // 잘못된 경로 처리
         redirect: "/signin",
+    },
+    {
+        path: "/oauth/kakao/callback",
+        component: KakaoCallback
     },
 ];
 
