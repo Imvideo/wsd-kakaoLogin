@@ -1,7 +1,9 @@
-# jysmovie
+# jysmoviekakao
 
-jysmovie는 사용자 친화적인 UI를 통해 영화 데이터를 검색하고 관리할 수 있는 영화 추천 및 관리 웹 애플리케이션입니다. TMDB API를 사용하여 최신 영화 데이터를 제공합니다.
-![스크린샷 2024-11-27 오후 7.36.43.png](../../../../var/folders/3_/vdklb6qj6jj8fy5794xktdxw0000gn/T/TemporaryItems/NSIRD_screencaptureui_SEqJKT/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202024-11-27%20%EC%98%A4%ED%9B%84%207.36.43.png)
+jysmoviekakao는 사용자 친화적인 UI를 통해 영화 데이터를 검색하고 관리할 수 있는 영화 추천 및 관리 웹 애플리케이션입니다. TMDB API를 사용하여 최신 영화 데이터를 제공합니다. 또한 카카오 로그인을 통해 보안성을 늘렸습니다.
+![스크린샷 2024-12-23 오후 4 09 49](https://github.com/user-attachments/assets/0616c821-9ff6-4fcc-9a2a-4b737776aa79)
+
+
 ---
 
 ## 📚 **기술 스택**
