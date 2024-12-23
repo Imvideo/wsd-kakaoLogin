@@ -31,6 +31,8 @@ npm install axios
 npm install vue-router
 npm install vuex
 npm install @tailwindcss/forms
+npm install dotenv
+npm install cross-env --save-dev
 ```
 
 ### **3. 개발 서버 실행**
